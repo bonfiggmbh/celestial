@@ -15,7 +15,7 @@
  */
 package com.bonfig.celestial;
 
-import static com.bonfig.celestial.CelestialMath.rad2hrs;
+import static com.bonfig.celestial.CelestialMath.deg2hrs;
 
 /**
  * LocalSiderealTime
@@ -28,7 +28,11 @@ public class LocalSiderealTime {
     private final GreenwichSiderealTime gst;
     private final double offset;
 
-    public LocalSiderealTime(final GreenwichSiderealTime gst, final double offset) {
+    public static LocalSiderealTime of(GreenwichSiderealTime gst, GeodeticCoordinates geo) {
+        return new LocalSiderealTime(gst, deg2hrs(geo.getLongitude()));
+    }
+
+    private LocalSiderealTime(final GreenwichSiderealTime gst, final double offset) {
         this.gst = gst;
         this.offset = offset;
     }
@@ -45,8 +49,9 @@ public class LocalSiderealTime {
         return offset;
     }
 
-    public static LocalSiderealTime ofLongitude(GreenwichSiderealTime gst, double longitude) {
-        return new LocalSiderealTime(gst, rad2hrs(longitude));
+    @Override
+    public String toString() {
+        return String.format("LST %.4fh", get());
     }
 
 }

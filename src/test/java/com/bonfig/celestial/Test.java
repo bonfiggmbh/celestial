@@ -29,22 +29,23 @@ import static com.bonfig.celestial.CelestialMath.rad2deg;
 public class Test {
 
     public static void main(String... args) {
-        double longitude = deg2rad(10.0);
-        double latitude = deg2rad(50.0);
-        double height = 0.0;
+        GeodeticCoordinates geo = GeodeticCoordinates.of(50.0, 10.0, 0.0);
         OffsetDateTime t = OffsetDateTime.of(2016, 11, 21, 22, 12, 50, 0, ZoneOffset.ofHours(1));
-        DeltaT dt = DeltaT.of(t);
+        // OffsetDateTime t = OffsetDateTime.of(1988, 7, 27, 0, 0, 0, 0, ZoneOffset.ofHours(0));
+        DeltaT deltaT = DeltaT.of(t);
         JulianDate jd = JulianDate.of(t);
         GreenwichSiderealTime gst = GreenwichSiderealTime.of(jd);
-        LocalSiderealTime lst = LocalSiderealTime.ofLongitude(gst, longitude);
+        LocalSiderealTime lst = LocalSiderealTime.of(gst, geo);
+        TerrestrialTime tt = TerrestrialTime.of(jd, deltaT);
+        SunPosition sp = SunPosition.of(tt);
 
-        System.out.printf("Longitude                 %.1f°%n", rad2deg(longitude));
-        System.out.printf("Latidue                   %.1f°%n", rad2deg(latitude));
+        System.out.printf("Geodetic coordinates      %s%n", geo);
         System.out.printf("Time                      %s%n", t);
-        System.out.printf("Delta T                   %.1fs%n", dt.get());
-        System.out.printf("Julian date               %.5fd%n", jd.get());
-        System.out.printf("Greenwich sidereal time   %.5fh%n", gst.get());
-        System.out.printf("Local sidereal time       %.5fh%n", lst.get());
+        System.out.printf("Delta T                   %s%n", deltaT);
+        System.out.printf("Julian date               %s%n", jd);
+        System.out.printf("Greenwich sidereal time   %s%n", gst);
+        System.out.printf("Local sidereal time       %s%n", lst);
+        System.out.printf("Sun's position            %s%n", sp);
     }
 
 }

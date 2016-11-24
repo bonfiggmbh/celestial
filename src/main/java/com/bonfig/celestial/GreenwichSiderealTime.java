@@ -27,14 +27,6 @@ public class GreenwichSiderealTime {
 
     private final double value;
 
-    public GreenwichSiderealTime(final double value) {
-        this.value = value;
-    }
-
-    public double get() {
-        return value;
-    }
-
     public static GreenwichSiderealTime of(final JulianDate jd) {
         double JD = trunc(jd.get() - 0.5) + 0.5;
         double S = JD - 2451545.0;
@@ -43,6 +35,19 @@ public class GreenwichSiderealTime {
         double UT = frac(jd.get() - 0.5) * 24.0 * 1.002737909;
         double GST = floorMod(UT + T0, 24.0);
         return new GreenwichSiderealTime(GST);
+    }
+
+    private GreenwichSiderealTime(final double value) {
+        this.value = value;
+    }
+
+    public double get() {
+        return value;
+    }
+
+    @Override
+    public String toString() {
+        return String.format("GST %.4fh", get());
     }
 
 }

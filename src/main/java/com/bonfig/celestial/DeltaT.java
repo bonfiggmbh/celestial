@@ -28,18 +28,6 @@ public class DeltaT {
 
     private final double value;
 
-    public DeltaT(final double value) {
-        this.value = value;
-    }
-
-    private DeltaT(final double x, final double k0, final double... ks) {
-        this(CelestialMath.polynomialInterpolation(x, k0, ks));
-    }
-
-    public double get() {
-        return value;
-    }
-
     public static DeltaT of(final OffsetDateTime t) {
         double y = t.getYear() + (t.getDayOfYear() - 1.0) / t.toLocalDate().lengthOfYear();
         if (y < -500.0) {
@@ -79,18 +67,21 @@ public class DeltaT {
         }
     }
 
-//    public static void load() {
-//        try (Scanner s = new Scanner(DeltaT.class.getClassLoader().getResourceAsStream("deltat.data"), "UTF-8")) {
-//            s.useLocale(Locale.ENGLISH);
-//            while (s.hasNext()) {
-//                int year = s.nextInt();
-//                int month = s.nextInt();
-//                int day = s.nextInt();
-//                double deltaT = s.nextDouble();
-//                LocalDate d = LocalDate.of(year, month, day);
-//                System.out.printf("%s: %f%n", d, deltaT);
-//            }
-//        }
-//    }
+    private DeltaT(final double value) {
+        this.value = value;
+    }
+
+    private DeltaT(final double x, final double k0, final double... ks) {
+        this(CelestialMath.polynomialInterpolation(x, k0, ks));
+    }
+
+    public double get() {
+        return value;
+    }
+
+    @Override
+    public String toString() {
+        return String.format("ΔT %.4fs", get());
+    }
 
 }

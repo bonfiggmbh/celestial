@@ -26,7 +26,11 @@ public class TerrestrialTime {
 
     private final double value;
 
-    public TerrestrialTime(final double value) {
+    public static TerrestrialTime of(final JulianDate jd, final DeltaT deltaT) {
+        return new TerrestrialTime(jd.get() + deltaT.get() / 86400.0);
+    }
+
+    private TerrestrialTime(final double value) {
         this.value = value;
     }
 
@@ -34,10 +38,9 @@ public class TerrestrialTime {
         return value;
     }
 
-    public static TerrestrialTime of(final OffsetDateTime t) {
-        JulianDate julianDate = JulianDate.of(t);
-        DeltaT deltaT = DeltaT.of(t);
-        return new TerrestrialTime(julianDate.get() + deltaT.get());
+    @Override
+    public String toString() {
+        return String.format("TT %.5fd", get());
     }
 
 }

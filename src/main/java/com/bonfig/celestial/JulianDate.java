@@ -29,16 +29,7 @@ import static com.bonfig.celestial.CelestialMath.trunc;
 public class JulianDate {
 
     private static final LocalDate GREGORIAN_CALENDAR_CUTOVER_DATE = LocalDate.of(1582, 10, 15);
-
     private final double value;
-
-    public JulianDate(final double value) {
-        this.value = value;
-    }
-
-    public double get() {
-        return value;
-    }
 
     public static JulianDate of(final OffsetDateTime t) {
         double y = t.getYear();
@@ -48,23 +39,31 @@ public class JulianDate {
             y -= 1;
             m += 12;
         }
-
         double B = 0.0;
         if (!t.toLocalDate().isBefore(GREGORIAN_CALENDAR_CUTOVER_DATE)) {
             double A = trunc(y / 100.0);
             B = 2.0 - A + trunc(A / 4.0);
         }
-
         double C = trunc(365.25 * y);
         if (y < 0.0) {
             C -= 0.75;
         }
-
         double D = trunc(30.6001 * (m + 1));
-
         double JD = B + C + D + d + 1720994.5;
         return new JulianDate(JD);
     }
 
+    private JulianDate(final double value) {
+        this.value = value;
+    }
+
+    public double get() {
+        return value;
+    }
+
+    @Override
+    public String toString() {
+        return String.format("JD %.5fd", get());
+    }
 
 }

@@ -22,6 +22,9 @@ package com.bonfig.celestial;
  */
 class CelestialMath {
 
+    public static final double PI = Math.PI;
+    public static final double PI2 = 2.0 * Math.PI;
+
     static double trunc(final double d) {
         return d < 0.0 ? Math.ceil(d) : Math.floor(d);
     }
@@ -39,15 +42,19 @@ class CelestialMath {
     }
 
     static double deg2rad(double deg) {
-        return deg / 180.0 * Math.PI;
+        return deg * PI / 180.0;
     }
 
     static double rad2deg(double rad) {
-        return rad / Math.PI * 180.0;
+        return rad * 180.0 / PI;
     }
 
-    static double rad2hrs(double rad) {
-        return rad / Math.PI * 12.0;
+    static double deg2hrs(double deg) {
+        return deg / 15.0;
+    }
+
+    static double sqr(double d) {
+        return d * d;
     }
 
     static double polynomialInterpolation(final double x, final double k0, final double... ks) {
