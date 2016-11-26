@@ -15,7 +15,9 @@
  */
 package com.bonfig.celestial;
 
+import static com.bonfig.celestial.CelestialFormat.*;
 import static com.bonfig.celestial.CelestialMath.*;
+import static java.lang.Math.*;
 
 /**
  * SunPosition
@@ -25,51 +27,46 @@ import static com.bonfig.celestial.CelestialMath.*;
  */
 public class SunPosition {
 
-    private final double latitude;
-    private final double longitude;
+    private final EclipticCoordinate eclipticCoordinate;
     private final double distance;
     private final double diameter;
 
     public static SunPosition of(TerrestrialTime tt) {
         double T = (tt.get() - 2415020.0) / 36525.0; // Julian centuries since 1900 January 0.5
+        double T2 = T * T;
         double epsg = deg2rad(279.6966778 + (36000.76892 + 0.0003025 * T) * T); // Sun's mean ecliptic longitude
         double omeg = deg2rad(281.2208444 + (1.719175 + 0.000452778 * T) * T); // longitude of Sun at perigee
         double e = 0.01675104 + (-0.0000418 - 0.000000126 * T) * T; // eccentricity of Sun-Earth orbit
-        double M = floorMod(epsg - omeg, PI2); // Sun's mean anomaly
+        double M = modrad(epsg - omeg); // Sun's mean anomaly
 
         // Solve Kepler's equation E - e sin E = M by iteration
-        double eps = PI2 * 1.0e-6;
+        double eps = 1.0e-6;
         double E = M;
         for (;;) {
-            double del = E - e * Math.sin(E) - M;
-            if (Math.abs(del) < eps) {
+            double del = E - e * sin(E) - M;
+            if (abs(del) < eps) {
                 break;
             }
-            E = E - del / (1.0 - e * Math.cos(E));
+            E = E - del / (1.0 - e * cos(E));
         }
 
-        double ny = 2.0 * Math.atan(Math.sqrt((1 + e) / (1 - e)) * Math.tan(E / 2.0)); // Sun's true anomaly
-        double lam = rad2deg(floorMod(ny + omeg, PI2)); // Sun's ecliptic longitude
-        double f = (1.0 + e * Math.cos(ny)) / (1.0 - e * e);
-        double r = 149598500 / f; // Earth-Sun distance
-        double the = 0.533128 * f; // Sun's angular diameter
+        double ny = modrad(2.0 * atan(sqrt((1 + e) / (1 - e)) * tan(E / 2.0))); // Sun's true anomaly
+        double lam = modrad(ny + omeg); // Sun's ecliptic longitude
+        double f = (1.0 + e * cos(ny)) / (1.0 - e * e);
+        double r = 149598500.0 / f; // Earth-Sun distance
+        double the = deg2rad(0.533128 * f); // Sun's angular diameter
 
-        return new SunPosition(0.0, lam, r, the);
+        return new SunPosition(EclipticCoordinate.of(0.0, lam), r, the);
     }
 
-    private SunPosition(double latitude, double longitude, double distance, double diameter) {
-        this.latitude = latitude;
-        this.longitude = longitude;
+    private SunPosition(final EclipticCoordinate eclipticCoordinate, final double distance, final double diameter) {
+        this.eclipticCoordinate = eclipticCoordinate;
         this.distance = distance;
         this.diameter = diameter;
     }
 
-    public double getLatitude() {
-        return latitude;
-    }
-
-    public double getLongitude() {
-        return longitude;
+    public EclipticCoordinate getEclipticCoordinate() {
+        return eclipticCoordinate;
     }
 
     public double getDistance() {
@@ -82,7 +79,7 @@ public class SunPosition {
 
     @Override
     public String toString() {
-        return String.format("SP %.6f°, %.6f°, %.0fkm, %.2f'", getLatitude(), getLongitude(), getDistance(),
-                60.0 * getDiameter());
+        return String.format("%s, %.0fkm, %s", eclipticCoordinate, distance, frad2dms(diameter));
     }
+
 }

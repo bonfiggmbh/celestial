@@ -15,43 +15,43 @@
  */
 package com.bonfig.celestial;
 
+import static com.bonfig.celestial.CelestialFormat.*;
 import static com.bonfig.celestial.CelestialMath.*;
 
 /**
- * LocalSiderealTime
- * based on algorithms by Peter Duffett-Smith's book 'Practical Astronomy with your Calculator'
+ * EclipticCoordinate
  *
  * @author Dipl.-Ing. Robert C. Bonfig
  */
-public class LocalSiderealTime {
+public class EclipticCoordinate {
 
-    private final GreenwichSiderealTime gst;
-    private final double offset;
+    private final double latitude;
+    private final double longitude;
 
-    public static LocalSiderealTime of(GreenwichSiderealTime gst, GeodeticCoordinate geo) {
-        return new LocalSiderealTime(gst, rad2hrs(geo.getLongitude()));
+    public static EclipticCoordinate of(final double latitude, final double longitude) {
+        return new EclipticCoordinate(latitude, longitude);
     }
 
-    private LocalSiderealTime(final GreenwichSiderealTime gst, final double offset) {
-        this.gst = gst;
-        this.offset = offset;
+    private EclipticCoordinate(final double latitude, final double longitude) {
+        this.latitude = latitude;
+        this.longitude = longitude;
     }
 
-    public double get() {
-        return gst.get() + offset;
+    public double getLatitude() {
+        return latitude;
     }
 
-    public GreenwichSiderealTime getGst() {
-        return gst;
-    }
-
-    public double getOffset() {
-        return offset;
+    public double getLongitude() {
+        return longitude;
     }
 
     @Override
     public String toString() {
-        return String.format("%.4fh", get());
+        return String.format("%s, %s", frad2deg(latitude), frad2deg(longitude));
+    }
+
+    public String toStringAlt() {
+        return String.format("%s, %s", frad2dms(latitude), frad2dms(longitude));
     }
 
 }

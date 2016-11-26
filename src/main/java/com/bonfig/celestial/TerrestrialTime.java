@@ -40,7 +40,7 @@ public class TerrestrialTime {
 
     @Override
     public String toString() {
-        return String.format("TT %.5fd", get());
+        return String.format("%.5fd", get());
     }
 
 }

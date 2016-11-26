@@ -81,7 +81,7 @@ public class DeltaT {
 
     @Override
     public String toString() {
-        return String.format("ΔT %.4fs", get());
+        return String.format("%.4fs", get());
     }
 
 }

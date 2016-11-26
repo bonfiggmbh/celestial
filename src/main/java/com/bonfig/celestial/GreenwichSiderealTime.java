@@ -47,7 +47,7 @@ public class GreenwichSiderealTime {
 
     @Override
     public String toString() {
-        return String.format("GST %.4fh", get());
+        return String.format("%.4fh", value);
     }
 
 }

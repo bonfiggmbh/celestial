@@ -15,22 +15,29 @@
  */
 package com.bonfig.celestial;
 
+import static com.bonfig.celestial.CelestialFormat.*;
+import static com.bonfig.celestial.CelestialMath.*;
+
 /**
- * GeodeticCoordinates
+ * GeodeticCoordinate
  *
  * @author Dipl.-Ing. Robert C. Bonfig
  */
-public class GeodeticCoordinates {
+public class GeodeticCoordinate {
 
     private final double latitude;
     private final double longitude;
     private final double elevation;
 
-    public static GeodeticCoordinates of(final double latitude, final double longitude, final double elevation) {
-        return new GeodeticCoordinates(latitude, longitude, elevation);
+    public static GeodeticCoordinate of(final double latitude, final double longitude, final double elevation) {
+        return new GeodeticCoordinate(latitude, longitude, elevation);
     }
 
-    private GeodeticCoordinates(final double latitude, final double longitude, final double elevation) {
+    public static GeodeticCoordinate ofDegrees(final double latitude, final double longitude, final double elevation) {
+        return new GeodeticCoordinate(deg2rad(latitude), deg2rad(longitude), elevation);
+    }
+
+    private GeodeticCoordinate(final double latitude, final double longitude, final double elevation) {
         this.latitude = latitude;
         this.longitude = longitude;
         this.elevation = elevation;
@@ -50,7 +57,11 @@ public class GeodeticCoordinates {
 
     @Override
     public String toString() {
-        return String.format("WGS84 %.6f°, %.6f°, %.0fm", getLatitude(), getLongitude(), getElevation());
+        return String.format("%s, %s, %.0fm",  frad2deg(latitude), frad2deg(longitude), elevation);
+    }
+
+    public String toStringAlt() {
+        return String.format("%s, %s, %.0fm",  frad2dms(latitude), frad2dms(longitude), elevation);
     }
 
 }

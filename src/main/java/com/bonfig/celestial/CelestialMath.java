@@ -41,12 +41,20 @@ class CelestialMath {
         return x - floorDiv(x, y) * y;
     }
 
+    static double modrad(final double rad) {
+        return floorMod(rad, PI2);
+    }
+
     static double deg2rad(double deg) {
         return deg * PI / 180.0;
     }
 
     static double rad2deg(double rad) {
         return rad * 180.0 / PI;
+    }
+
+    static double rad2hrs(double rad) {
+        return rad * 12.0 / PI;
     }
 
     static double deg2hrs(double deg) {

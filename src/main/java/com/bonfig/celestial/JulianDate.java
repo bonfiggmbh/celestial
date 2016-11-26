@@ -63,7 +63,7 @@ public class JulianDate {
 
     @Override
     public String toString() {
-        return String.format("JD %.5fd", get());
+        return String.format("%.5fd", get());
     }
 
 }
