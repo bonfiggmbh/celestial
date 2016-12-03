@@ -57,6 +57,10 @@ class CelestialMath {
         return rad * 12.0 / PI;
     }
 
+    static double hrs2rad(double hrs) {
+        return hrs * PI / 12.0;
+    }
+
     static double deg2hrs(double deg) {
         return deg / 15.0;
     }

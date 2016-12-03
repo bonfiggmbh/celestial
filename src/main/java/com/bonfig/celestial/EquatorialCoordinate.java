@@ -21,6 +21,7 @@ import static java.lang.Math.*;
 
 /**
  * EquatorialCoordinate
+ * based on algorithms by Peter Duffett-Smith's book 'Practical Astronomy with your Calculator'
  *
  * @author Dipl.-Ing. Robert C. Bonfig
  */
@@ -28,6 +29,10 @@ public class EquatorialCoordinate {
 
     private final double rightAscension;
     private final double declination;
+
+    public static EquatorialCoordinate of(final double rightAscension, final double declination) {
+        return new EquatorialCoordinate(rightAscension, declination);
+    }
 
     public static EquatorialCoordinate of(EclipticCoordinate ecc, TerrestrialTime tt) {
         double T = (tt.get() - 2451545.0) / 36525.0; // Julian centuries since 2000 January 1.5
@@ -56,10 +61,6 @@ public class EquatorialCoordinate {
 
     public double getDeclination() {
         return declination;
-    }
-
-    public static EquatorialCoordinate of(final double rightAscension, final double declination) {
-        return new EquatorialCoordinate(rightAscension, declination);
     }
 
     @Override
