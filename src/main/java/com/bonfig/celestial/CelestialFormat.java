@@ -30,6 +30,9 @@ class CelestialFormat {
     }
 
     static String frad2dms(double rad) {
+        if (rad < 0) {
+            return "-" + frad2dms(-rad);
+        }
         double v = rad2deg(rad);
         int h = (int) v;
         v = 60.0 * (v - h);
@@ -45,6 +48,9 @@ class CelestialFormat {
     }
 
     static String frad2hms(double rad) {
+        if (rad < 0) {
+            return "-" + frad2hms(-rad);
+        }
         double v = rad2hrs(rad);
         int h = (int) v;
         v = 60.0 * (v - h);
