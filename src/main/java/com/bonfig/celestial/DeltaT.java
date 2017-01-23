@@ -17,6 +17,8 @@ package com.bonfig.celestial;
 
 import java.time.OffsetDateTime;
 
+import static com.bonfig.celestial.CelestialMath.polynomialInterpolation;
+
 /**
  * DeltaT
  * based on POLYNOMIAL EXPRESSIONS FOR DELTA T of Five Millennium Canon of Solar Eclipses [Espenak and Meeus]
@@ -60,7 +62,7 @@ public class DeltaT {
         } else if (y < 2050.0) {
             return new DeltaT(y - 2000.0, 62.92, 0.32217, 0.005589);
         } else if (y < 2150.0) {
-            return new DeltaT(CelestialMath.polynomialInterpolation((y - 1820.0) / 100.0, -20.0, 0.0, 32.0)
+            return new DeltaT(polynomialInterpolation((y - 1820.0) / 100.0, -20.0, 0.0, 32.0)
                     - 0.5628 * (2150.0 - y));
         } else {
             return new DeltaT((y - 1820.0) / 100.0, -20.0, 0.0, 32.0);
@@ -72,7 +74,7 @@ public class DeltaT {
     }
 
     private DeltaT(final double x, final double k0, final double... ks) {
-        this(CelestialMath.polynomialInterpolation(x, k0, ks));
+        this(polynomialInterpolation(x, k0, ks));
     }
 
     public double get() {

@@ -15,8 +15,8 @@
  */
 package com.bonfig.celestial;
 
-import static com.bonfig.celestial.CelestialFormat.*;
-import static com.bonfig.celestial.CelestialMath.*;
+import static com.bonfig.celestial.Arc.*;
+import static com.bonfig.celestial.CelestialMath.ZERO;
 
 /**
  * EclipticCoordinate
@@ -25,33 +25,49 @@ import static com.bonfig.celestial.CelestialMath.*;
  */
 public class EclipticCoordinate {
 
-    private final double latitude;
-    private final double longitude;
+    private final Arc latitude;
+    private final Arc longitude;
 
     public static EclipticCoordinate of(final double latitude, final double longitude) {
-        return new EclipticCoordinate(latitude, longitude);
+        if (latitude < -QUARTER_CIRCLE || latitude > QUARTER_CIRCLE) {
+            throw new IllegalArgumentException("Latitude must be in range [-PI/2, PI/2]: " + latitude);
+        }
+        if (longitude < ZERO || longitude >= CIRCLE) {
+            throw new IllegalArgumentException("Longitude must be in range [0, 2*PI[: " + longitude);
+        }
+        return new EclipticCoordinate(Arc.of(latitude), Arc.of(longitude));
     }
 
-    private EclipticCoordinate(final double latitude, final double longitude) {
+    public static EclipticCoordinate ofDegrees(final double latitude, final double longitude) {
+        if (latitude < -QUARTER_CIRCLE_DEGREES || latitude > QUARTER_CIRCLE_DEGREES) {
+            throw new IllegalArgumentException("Latitude must be in range [-90, 90]: " + latitude);
+        }
+        if (longitude < ZERO || longitude >= CIRCLE_DEGREES) {
+            throw new IllegalArgumentException("Longitude must be in range [0, 360[: " + longitude);
+        }
+        return new EclipticCoordinate(Arc.ofDegrees(latitude), Arc.ofDegrees(longitude));
+    }
+
+    private EclipticCoordinate(final Arc latitude, final Arc longitude) {
         this.latitude = latitude;
         this.longitude = longitude;
     }
 
-    public double getLatitude() {
+    public Arc getLatitude() {
         return latitude;
     }
 
-    public double getLongitude() {
+    public Arc getLongitude() {
         return longitude;
     }
 
     @Override
     public String toString() {
-        return String.format("%s, %s", frad2deg(latitude), frad2deg(longitude));
+        return String.format("%s, %s", latitude, longitude);
     }
 
-    public String toStringAlt() {
-        return String.format("%s, %s", frad2dms(latitude), frad2dms(longitude));
+    public String toStringDegrees() {
+        return String.format("%s, %s", latitude.toStringDegrees(), longitude.toStringDegrees());
     }
 
 }

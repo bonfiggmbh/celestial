@@ -15,8 +15,6 @@
  */
 package com.bonfig.celestial;
 
-import java.time.OffsetDateTime;
-
 /**
  * TerrestrialTime, aka. Terrestrial Dynamical Time
  *

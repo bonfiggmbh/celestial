@@ -15,43 +15,32 @@
  */
 package com.bonfig.celestial;
 
-import static com.bonfig.celestial.CelestialMath.*;
-
 /**
- * LocalSiderealTime
- * based on algorithms by Peter Duffett-Smith's book 'Practical Astronomy with your Calculator'
+ * LocalSiderealTime in radians.
  *
  * @author Dipl.-Ing. Robert C. Bonfig
  */
-public class LocalSiderealTime {
+public class LocalSiderealTime extends Arc {
 
     private final GreenwichSiderealTime gst;
-    private final double offset;
+    private final Arc longitude;
 
     public static LocalSiderealTime of(GreenwichSiderealTime gst, GeodeticCoordinate geo) {
-        return new LocalSiderealTime(gst, rad2hrs(geo.getLongitude()));
+        return new LocalSiderealTime(gst, geo.getLongitude());
     }
 
-    private LocalSiderealTime(final GreenwichSiderealTime gst, final double offset) {
+    private LocalSiderealTime(final GreenwichSiderealTime gst, final Arc longitude) {
+        super(gst.get() + longitude.get());
         this.gst = gst;
-        this.offset = offset;
-    }
-
-    public double get() {
-        return gst.get() + offset;
+        this.longitude = longitude;
     }
 
     public GreenwichSiderealTime getGst() {
         return gst;
     }
 
-    public double getOffset() {
-        return offset;
-    }
-
-    @Override
-    public String toString() {
-        return String.format("%.4fh", get());
+    public Arc getLongitude() {
+        return longitude;
     }
 
 }

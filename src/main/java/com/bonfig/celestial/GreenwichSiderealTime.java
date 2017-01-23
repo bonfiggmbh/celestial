@@ -18,36 +18,28 @@ package com.bonfig.celestial;
 import static com.bonfig.celestial.CelestialMath.*;
 
 /**
- * GreenwichSiderealTime
- * based on algorithms by Peter Duffett-Smith's book 'Practical Astronomy with your Calculator'
+ * GreenwichSiderealTime in radians.
  *
  * @author Dipl.-Ing. Robert C. Bonfig
  */
-public class GreenwichSiderealTime {
-
-    private final double value;
+public class GreenwichSiderealTime extends Arc {
 
     public static GreenwichSiderealTime of(final JulianDate jd) {
         double JD = trunc(jd.get() - 0.5) + 0.5;
-        double S = JD - 2451545.0;
-        double T = S / 36525.0;
-        double T0 = 6.697374558 + (2400.051336 + 0.000025862 * T) * T;
-        double UT = frac(jd.get() - 0.5) * 24.0 * 1.002737909;
-        double GST = floorMod(UT + T0, 24.0);
-        return new GreenwichSiderealTime(GST);
+        double T = (JD - 2451545.0) / 36525.0;
+        double T0 = polynomialInterpolation(T, 24110.54841, 8640184.812866, 0.093104, 0.0000062) / 3600.0;
+        double UT = frac(jd.get() - 0.5) * 24.0 * 1.00273790935;
+        double GST = floorMod(T0 + UT, 24.0);
+        return new GreenwichSiderealTime(hrs2rad(GST));
     }
 
     private GreenwichSiderealTime(final double value) {
-        this.value = value;
-    }
-
-    public double get() {
-        return value;
+        super(value);
     }
 
     @Override
     public String toString() {
-        return String.format("%.4fh", value);
+        return toStringHours();
     }
 
 }

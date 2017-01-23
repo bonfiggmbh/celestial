@@ -18,7 +18,6 @@ package com.bonfig.celestial;
 import org.junit.Test;
 
 import java.time.OffsetDateTime;
-import java.time.ZoneOffset;
 
 import static org.junit.Assert.assertEquals;
 
@@ -29,25 +28,21 @@ import static org.junit.Assert.assertEquals;
  */
 public class TestJulianDate {
 
-    @Test
-    public void test0() {
-        OffsetDateTime t = OffsetDateTime.of(1900, 1, 1, 0, 0, 0, 0, ZoneOffset.UTC);
-        JulianDate jd = JulianDate.of(t);
-        assertEquals(2415020.500000, jd.get(), 0.00001);
-    }
+    private static final Object[][] TEST_CASES = {
+            {"-4712-01-01T12:00:00Z", 0.0},
+            {"1582-10-04T23:59:59.999999999Z", 2299160.5},
+            {"1582-10-15T00:00:00Z", 2299160.5},
+            {"2000-01-01T12:00:00Z", 2451545.0}
+    };
 
     @Test
-    public void test1() {
-        OffsetDateTime t = OffsetDateTime.of(2009, 6, 19, 18, 0, 0, 0, ZoneOffset.UTC);
-        JulianDate jd = JulianDate.of(t);
-        assertEquals(2455002.250000, jd.get(), 0.000001);
-    }
-
-    @Test
-    public void test2() {
-        OffsetDateTime t = OffsetDateTime.of(2016, 11, 20, 11, 5, 36, 0, ZoneOffset.ofHours(1));
-        JulianDate jd = JulianDate.of(t);
-        assertEquals(2457712.920556, jd.get(), 0.000001);
+    public void test() {
+        for (Object[] testCase : TEST_CASES) {
+            OffsetDateTime t = OffsetDateTime.parse((String) testCase[0]);
+            double expected = (Double) testCase[1];
+            double actual = JulianDate.of(t).get();
+            assertEquals(expected, actual, 0.00001);
+        }
     }
 
 }

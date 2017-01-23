@@ -15,7 +15,6 @@
  */
 package com.bonfig.celestial;
 
-import static com.bonfig.celestial.CelestialFormat.frad2dms;
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
 
@@ -27,11 +26,11 @@ import java.time.ZoneOffset;
 public class Test {
 
     public static void main(String... args) {
-        GeodeticCoordinate geo = GeodeticCoordinate.ofDegrees(50.0, 10.0, 0.0);
-        // OffsetDateTime t = OffsetDateTime.of(1988, 7, 27, 0, 0, 0, 0, ZoneOffset.ofHours(0));
-        OffsetDateTime t = OffsetDateTime.of(2003, 7, 27, 0, 0, 0, 0, ZoneOffset.ofHours(0));
-        // OffsetDateTime t = OffsetDateTime.of(2009, 7, 6, 0, 0, 0, 0, ZoneOffset.ofHours(0));
-        // OffsetDateTime t = OffsetDateTime.of(2016, 11, 21, 22, 12, 50, 0, ZoneOffset.ofHours(1));
+        GeodeticCoordinate geo = GeodeticCoordinate.ofDegrees(50.0, 9.0, 0.0);
+        // OffsetDateTime t = OffsetDateTime.from(1988, 7, 27, 0, 0, 0, 0, ZoneOffset.ofHours(0));
+        OffsetDateTime t = OffsetDateTime.of(2017, 1, 21, 0, 0, 0, 0, ZoneOffset.ofHours(1));
+        // OffsetDateTime t = OffsetDateTime.from(2009, 7, 6, 0, 0, 0, 0, ZoneOffset.ofHours(0));
+        // OffsetDateTime t = OffsetDateTime.from(2016, 11, 21, 22, 12, 50, 0, ZoneOffset.ofHours(1));
         DeltaT deltaT = DeltaT.of(t);
         JulianDate jd = JulianDate.of(t);
         GreenwichSiderealTime gst = GreenwichSiderealTime.of(jd);
@@ -46,8 +45,8 @@ public class Test {
         System.out.printf("Greenwich sidereal time   %s%n", gst);
         System.out.printf("Local sidereal time       %s%n", lst);
         System.out.printf("Sun's ecliptical coord.   %s%n", sp.getEclipticCoordinate());
-        System.out.printf("Sun's equatorial coord.   %s%n", EquatorialCoordinate.of(sp.getEclipticCoordinate(), tt).toStringAlt());
-        System.out.printf("Sun's angular size        %s%n", frad2dms(sp.getDiameter()));
+        System.out.printf("Sun's equatorial coord.   %s%n", EquatorialCoordinate.of(sp.getEclipticCoordinate(), tt).toStringHoursAndDegrees());
+        System.out.printf("Sun's angular size        %s%n", sp.getDiameter());
         System.out.printf("Sun-Earth distance        %.0fkm%n", sp.getDistance());
     }
 

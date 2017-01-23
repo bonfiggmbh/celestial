@@ -17,39 +17,38 @@ package com.bonfig.celestial;
 
 import java.time.LocalDate;
 import java.time.OffsetDateTime;
+import java.time.ZoneOffset;
 
 import static com.bonfig.celestial.CelestialMath.trunc;
 
 /**
  * JulianDate
- * based on algorithms by Peter Duffett-Smith's book 'Practical Astronomy with your Calculator'
  *
  * @author Dipl.-Ing. Robert C. Bonfig
  */
 public class JulianDate {
 
-    private static final LocalDate GREGORIAN_CALENDAR_CUTOVER_DATE = LocalDate.of(1582, 10, 15);
+    private static final LocalDate JULIAN_CALENDAR_CUT_OVER_DATE = LocalDate.of(1582, 10, 4);
+    private static final LocalDate GREGORIAN_CALENDAR_CUT_OVER_DATE = LocalDate.of(1582, 10, 15);
     private final double value;
 
-    public static JulianDate of(final OffsetDateTime t) {
-        double y = t.getYear();
-        double m = t.getMonthValue();
-        double d = t.getDayOfMonth() + (t.toOffsetTime().toLocalTime().toSecondOfDay() - t.toOffsetTime().getOffset().getTotalSeconds()) / 86400.0;
-        if (m < 3) {
-            y -= 1;
-            m += 12;
+    public static JulianDate of(final OffsetDateTime time) {
+        OffsetDateTime t = time.withOffsetSameInstant(ZoneOffset.UTC);
+        double Y = t.getYear();
+        double M = t.getMonthValue();
+        double D = t.getDayOfMonth() + (double) t.toLocalTime().toNanoOfDay() / 86_400_000_000_000.0;
+        if (M < 3) {
+            Y -= 1;
+            M += 12;
         }
         double B = 0.0;
-        if (!t.toLocalDate().isBefore(GREGORIAN_CALENDAR_CUTOVER_DATE)) {
-            double A = trunc(y / 100.0);
+        if (!t.toLocalDate().isBefore(GREGORIAN_CALENDAR_CUT_OVER_DATE)) {
+            double A = trunc(Y / 100.0);
             B = 2.0 - A + trunc(A / 4.0);
+        } else if (t.toLocalDate().isAfter(JULIAN_CALENDAR_CUT_OVER_DATE)) {
+            throw new IllegalArgumentException("Invalid date: " + t.toLocalDate());
         }
-        double C = trunc(365.25 * y);
-        if (y < 0.0) {
-            C -= 0.75;
-        }
-        double D = trunc(30.6001 * (m + 1));
-        double JD = B + C + D + d + 1720994.5;
+        double JD = trunc(365.25 * (Y + 4716.0)) + trunc(30.6001 * (M + 1)) + D + B - 1524.5;
         return new JulianDate(JD);
     }
 

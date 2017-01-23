@@ -15,8 +15,8 @@
  */
 package com.bonfig.celestial;
 
-import static com.bonfig.celestial.CelestialFormat.*;
-import static com.bonfig.celestial.CelestialMath.*;
+import static com.bonfig.celestial.Arc.*;
+import static com.bonfig.celestial.CelestialMath.ZERO;
 import static java.lang.Math.*;
 
 /**
@@ -27,49 +27,65 @@ import static java.lang.Math.*;
  */
 public class EquatorialCoordinate {
 
-    private final double rightAscension;
-    private final double declination;
+    private final Arc rightAscension;
+    private final Arc declination;
 
     public static EquatorialCoordinate of(final double rightAscension, final double declination) {
-        return new EquatorialCoordinate(rightAscension, declination);
+        if (rightAscension < ZERO || rightAscension >= CIRCLE) {
+            throw new IllegalArgumentException("RightAscension must be in range [0, 2*PI[: " + rightAscension);
+        }
+        if (declination < -QUARTER_CIRCLE || declination > QUARTER_CIRCLE) {
+            throw new IllegalArgumentException("Declination must be in range [-PI/2, PI/2]: " + declination);
+        }
+        return new EquatorialCoordinate(Arc.of(rightAscension), Arc.of(declination));
+    }
+
+    public static EquatorialCoordinate ofHoursAndDegrees(final double rightAscension, final double declination) {
+        if (rightAscension < ZERO || rightAscension > CIRCLE_HOURS) {
+            throw new IllegalArgumentException("RightAscension must be in range [0, 24[: " + rightAscension);
+        }
+        if (declination < -QUARTER_CIRCLE_DEGREES || declination > QUARTER_CIRCLE_DEGREES) {
+            throw new IllegalArgumentException("Declination must be in range [-90, 90]: " + declination);
+        }
+        return new EquatorialCoordinate(Arc.ofHours(rightAscension), Arc.ofDegrees(declination));
     }
 
     public static EquatorialCoordinate of(EclipticCoordinate ecc, TerrestrialTime tt) {
         double T = (tt.get() - 2451545.0) / 36525.0; // Julian centuries since 2000 January 1.5
-        double eps = deg2rad(23.0 + (26.0 + (21.45 + (-46.815 + (-0.0006 + 0.00181 * T) * T) * T) / 60.0) / 60.0); // mean obliquity of the ecliptic
+        double eps = deg2rad(23.0 + (26.0 + (21.45 + (-46.815 + (-0.0006 + 0.00181 * T) * T) * T) / 60.0) / 60.0); // mean obliquity from the ecliptic
         double sinEps = sin(eps);
         double cosEps = cos(eps);
-        double sinBet = sin(ecc.getLatitude());
-        double cosBet = cos(ecc.getLatitude());
+        double sinBet = Arc.sin(ecc.getLatitude());
+        double cosBet = Arc.cos(ecc.getLatitude());
         double tanBet = sinBet / cosBet;
-        double sinLam = sin(ecc.getLongitude());
-        double cosLam = cos(ecc.getLongitude());
+        double sinLam = Arc.sin(ecc.getLongitude());
+        double cosLam = Arc.cos(ecc.getLongitude());
 
         double alp = modrad(atan2(sinLam * cosEps - tanBet * sinEps, cosLam));
         double del = asin(sinBet * cosEps + cosBet * sinEps * sinLam);
-        return new EquatorialCoordinate(alp, del);
+        return of(alp, del);
     }
 
-    private EquatorialCoordinate(final double rightAscension, final double declination) {
+    private EquatorialCoordinate(final Arc rightAscension, final Arc declination) {
         this.rightAscension = rightAscension;
         this.declination = declination;
     }
 
-    public double getRightAscension() {
+    public Arc getRightAscension() {
         return rightAscension;
     }
 
-    public double getDeclination() {
+    public Arc getDeclination() {
         return declination;
     }
 
     @Override
     public String toString() {
-        return String.format("%s, %s", frad2hrs(rightAscension), frad2deg(declination));
+        return String.format("%s, %s", rightAscension, declination);
     }
 
-    public String toStringAlt() {
-        return String.format("%s, %s", frad2hms(rightAscension), frad2dms(declination));
+    public String toStringHoursAndDegrees() {
+        return String.format("%s, %s", rightAscension.toStringHours(), declination.toStringDegrees());
     }
 
 }
