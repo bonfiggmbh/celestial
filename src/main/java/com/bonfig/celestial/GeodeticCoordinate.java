@@ -15,8 +15,7 @@
  */
 package com.bonfig.celestial;
 
-import static com.bonfig.celestial.CelestialFormat.*;
-import static com.bonfig.celestial.CelestialMath.*;
+import static com.bonfig.celestial.Arc.*;
 
 /**
  * GeodeticCoordinate
@@ -25,43 +24,51 @@ import static com.bonfig.celestial.CelestialMath.*;
  */
 public class GeodeticCoordinate {
 
-    private final double latitude;
-    private final double longitude;
-    private final double elevation;
+    private final Arc latitude;
+    private final Arc longitude;
+    private final Length elevation;
 
     public static GeodeticCoordinate of(final double latitude, final double longitude, final double elevation) {
-        return new GeodeticCoordinate(latitude, longitude, elevation);
+        if (latitude < -QUARTER_CIRCLE || latitude > QUARTER_CIRCLE) {
+            throw new IllegalArgumentException("Latitude must be in range [-PI/2, PI/2]: " + latitude);
+        }
+        if (longitude < -HALF_CIRCLE || longitude >= HALF_CIRCLE) {
+            throw new IllegalArgumentException("Longitude must be in range [-PI, PI[: " + longitude);
+        }
+        return new GeodeticCoordinate(Arc.of(latitude), Arc.of(longitude), Length.ofKiloMeters(elevation));
     }
 
     public static GeodeticCoordinate ofDegrees(final double latitude, final double longitude, final double elevation) {
-        return new GeodeticCoordinate(deg2rad(latitude), deg2rad(longitude), elevation);
+        if (latitude < -QUARTER_CIRCLE_DEGREES || latitude > QUARTER_CIRCLE_DEGREES) {
+            throw new IllegalArgumentException("Latitude must be in range [-90, 90]: " + latitude);
+        }
+        if (longitude < -HALF_CIRCLE_DEGREES || longitude >= HALF_CIRCLE_DEGREES) {
+            throw new IllegalArgumentException("Longitude must be in range [-180, 180[: " + longitude);
+        }
+        return new GeodeticCoordinate(Arc.ofDegrees(latitude), Arc.ofDegrees(longitude), Length.ofKiloMeters(elevation));
     }
 
-    private GeodeticCoordinate(final double latitude, final double longitude, final double elevation) {
+    private GeodeticCoordinate(final Arc latitude, final Arc longitude, final Length elevation) {
         this.latitude = latitude;
         this.longitude = longitude;
         this.elevation = elevation;
     }
 
-    public double getLatitude() {
+    public Arc getLatitude() {
         return latitude;
     }
 
-    public double getLongitude() {
+    public Arc getLongitude() {
         return longitude;
     }
 
-    public double getElevation() {
+    public Length getElevation() {
         return elevation;
     }
 
     @Override
     public String toString() {
-        return String.format("%s, %s, %.0fm",  frad2deg(latitude), frad2deg(longitude), elevation);
-    }
-
-    public String toStringAlt() {
-        return String.format("%s, %s, %.0fm",  frad2dms(latitude), frad2dms(longitude), elevation);
+        return String.format("%s, %s, %s", latitude.toStringDegrees(), longitude.toStringDegrees(), elevation.getKiloMeters());
     }
 
 }
